@@ -4,7 +4,15 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="DbEntityProductModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+    <Schema Namespace="DbEntityProductModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="TBLADMIN">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="tinyint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="USERNAME" Type="varchar" MaxLength="20" />
+          <Property Name="PASSWORD" Type="varchar" MaxLength="20" />
+        </EntityType>
         <EntityType Name="TBLCATEGORY">
           <Key>
             <PropertyRef Name="ID" />
@@ -20,6 +28,7 @@
           <Property Name="CUSTOMERNAME" Type="varchar" MaxLength="30" />
           <Property Name="CUSTOMERSURNAME" Type="varchar" MaxLength="30" />
           <Property Name="CITY" Type="varchar" MaxLength="15" />
+          <Property Name="STATUS" Type="bit" />
         </EntityType>
         <EntityType Name="TBLPRODUCT">
           <Key>
@@ -41,7 +50,7 @@
           <Property Name="PRODUCT" Type="int" />
           <Property Name="CUSTOMER" Type="int" />
           <Property Name="PRICE" Type="decimal" Precision="18" Scale="2" />
-          <Property Name="DATE" Type="smalldatetime" />
+          <Property Name="DATE" Type="datetime" />
         </EntityType>
         <Association Name="FK_TBLPRODUCT_TBLCATEGORY">
           <End Role="TBLCATEGORY" Type="Self.TBLCATEGORY" Multiplicity="0..1" />
@@ -79,7 +88,9 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Function Name="GETBRAND" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
         <EntityContainer Name="DbEntityProductModelStoreContainer">
+          <EntitySet Name="TBLADMIN" EntityType="Self.TBLADMIN" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="TBLCATEGORY" EntityType="Self.TBLCATEGORY" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="TBLCUSTOMER" EntityType="Self.TBLCUSTOMER" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="TBLPRODUCT" EntityType="Self.TBLPRODUCT" Schema="dbo" store:Type="Tables" />
@@ -97,8 +108,7 @@
             <End Role="TBLSALES" EntitySet="TBLSALES" />
           </AssociationSet>
         </EntityContainer>
-      </Schema>
-    </edmx:StorageModels>
+      </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="DbEntityProductModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
@@ -119,6 +129,7 @@
           <Property Name="CUSTOMERSURNAME" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
           <Property Name="CITY" Type="String" MaxLength="15" FixedLength="false" Unicode="false" />
           <NavigationProperty Name="TBLSALES" Relationship="Self.FK_TBLSALES_TBLCUSTOMER" FromRole="TBLCUSTOMER" ToRole="TBLSALES" />
+          <Property Name="STATUS" Type="Boolean" />
         </EntityType>
         <EntityType Name="TBLPRODUCT">
           <Key>
@@ -142,7 +153,7 @@
           <Property Name="PRODUCT" Type="Int32" />
           <Property Name="CUSTOMER" Type="Int32" />
           <Property Name="PRICE" Type="Decimal" Precision="18" Scale="2" />
-          <Property Name="DATE" Type="DateTime" Precision="0" />
+          <Property Name="DATE" Type="DateTime" Precision="3" />
           <NavigationProperty Name="TBLCUSTOMER" Relationship="Self.FK_TBLSALES_TBLCUSTOMER" FromRole="TBLSALES" ToRole="TBLCUSTOMER" />
           <NavigationProperty Name="TBLPRODUCT" Relationship="Self.FK_TBLSALES_TBLPRODUCT" FromRole="TBLSALES" ToRole="TBLPRODUCT" />
         </EntityType>
@@ -199,7 +210,17 @@
             <End Role="TBLPRODUCT" EntitySet="TBLPRODUCT" />
             <End Role="TBLSALES" EntitySet="TBLSALES" />
           </AssociationSet>
+          <FunctionImport Name="GETBRAND" ReturnType="Collection(String)" />
+          <EntitySet Name="TBLADMIN" EntityType="DbEntityProductModel.TBLADMIN" />
         </EntityContainer>
+        <EntityType Name="TBLADMIN">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Byte" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="USERNAME" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="PASSWORD" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+        </EntityType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -217,6 +238,7 @@
           <EntitySetMapping Name="TBLCUSTOMER">
             <EntityTypeMapping TypeName="DbEntityProductModel.TBLCUSTOMER">
               <MappingFragment StoreEntitySet="TBLCUSTOMER">
+                <ScalarProperty Name="STATUS" ColumnName="STATUS" />
                 <ScalarProperty Name="CUSTOMERID" ColumnName="CUSTOMERID" />
                 <ScalarProperty Name="CUSTOMERNAME" ColumnName="CUSTOMERNAME" />
                 <ScalarProperty Name="CUSTOMERSURNAME" ColumnName="CUSTOMERSURNAME" />
@@ -245,6 +267,16 @@
                 <ScalarProperty Name="CUSTOMER" ColumnName="CUSTOMER" />
                 <ScalarProperty Name="PRICE" ColumnName="PRICE" />
                 <ScalarProperty Name="DATE" ColumnName="DATE" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="GETBRAND" FunctionName="DbEntityProductModel.Store.GETBRAND" />
+          <EntitySetMapping Name="TBLADMIN">
+            <EntityTypeMapping TypeName="DbEntityProductModel.TBLADMIN">
+              <MappingFragment StoreEntitySet="TBLADMIN">
+                <ScalarProperty Name="PASSWORD" ColumnName="PASSWORD" />
+                <ScalarProperty Name="USERNAME" ColumnName="USERNAME" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

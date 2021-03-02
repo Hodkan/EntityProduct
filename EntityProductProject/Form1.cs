@@ -21,5 +21,40 @@ namespace EntityProductProject
         {
 
         }
+
+        DbEntityProductEntities db = new DbEntityProductEntities();
+        private void BtnList_Click(object sender, EventArgs e)
+        {
+            dataGridView1.DataSource = db.TBLCATEGORY.ToList();
+            
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            TBLCATEGORY t = new TBLCATEGORY();
+            t.NAME = textBox2.Text;
+            db.TBLCATEGORY.Add(t);
+            db.SaveChanges();
+            MessageBox.Show("Category Added");
+        }
+
+        private void BtnDel_Click(object sender, EventArgs e)
+        {
+            int id = Convert.ToInt32(textBox1.Text);
+            var ctgry = db.TBLCATEGORY.Find(id);
+            db.TBLCATEGORY.Remove(ctgry);
+            db.SaveChanges();
+            MessageBox.Show("Category Deleted");
+
+        }
+
+        private void BtnUpdate_Click(object sender, EventArgs e)
+        {
+            int id = Convert.ToInt32(textBox1.Text);
+            var ctgry = db.TBLCATEGORY.Find(id);
+            ctgry.NAME = textBox2.Text;
+            db.SaveChanges();
+            MessageBox.Show("Updated Successfully.");
+        }
     }
 }

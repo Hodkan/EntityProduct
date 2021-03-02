@@ -1,0 +1,112 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="DbEntityProductModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+  <EntityType Name="TBLCATEGORY">
+    <Key>
+      <PropertyRef Name="ID" />
+    </Key>
+    <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="NAME" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+    <NavigationProperty Name="TBLPRODUCT" Relationship="Self.FK_TBLPRODUCT_TBLCATEGORY" FromRole="TBLCATEGORY" ToRole="TBLPRODUCT" />
+  </EntityType>
+  <EntityType Name="TBLCUSTOMER">
+    <Key>
+      <PropertyRef Name="CUSTOMERID" />
+    </Key>
+    <Property Name="CUSTOMERID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="CUSTOMERNAME" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+    <Property Name="CUSTOMERSURNAME" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+    <Property Name="CITY" Type="String" MaxLength="15" FixedLength="false" Unicode="false" />
+    <NavigationProperty Name="TBLSALES" Relationship="Self.FK_TBLSALES_TBLCUSTOMER" FromRole="TBLCUSTOMER" ToRole="TBLSALES" />
+    <Property Name="STATUS" Type="Boolean" />
+  </EntityType>
+  <EntityType Name="TBLPRODUCT">
+    <Key>
+      <PropertyRef Name="PRODUCTID" />
+    </Key>
+    <Property Name="PRODUCTID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="PRODUCTNAME" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+    <Property Name="BRAND" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+    <Property Name="STOCK" Type="Int16" />
+    <Property Name="PRICE" Type="Decimal" Precision="18" Scale="2" />
+    <Property Name="STATUS" Type="Boolean" />
+    <Property Name="CATEGORY" Type="Int32" />
+    <NavigationProperty Name="TBLCATEGORY" Relationship="Self.FK_TBLPRODUCT_TBLCATEGORY" FromRole="TBLPRODUCT" ToRole="TBLCATEGORY" />
+    <NavigationProperty Name="TBLSALES" Relationship="Self.FK_TBLSALES_TBLPRODUCT" FromRole="TBLPRODUCT" ToRole="TBLSALES" />
+  </EntityType>
+  <EntityType Name="TBLSALES">
+    <Key>
+      <PropertyRef Name="SALESID" />
+    </Key>
+    <Property Name="SALESID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="PRODUCT" Type="Int32" />
+    <Property Name="CUSTOMER" Type="Int32" />
+    <Property Name="PRICE" Type="Decimal" Precision="18" Scale="2" />
+    <Property Name="DATE" Type="DateTime" Precision="3" />
+    <NavigationProperty Name="TBLCUSTOMER" Relationship="Self.FK_TBLSALES_TBLCUSTOMER" FromRole="TBLSALES" ToRole="TBLCUSTOMER" />
+    <NavigationProperty Name="TBLPRODUCT" Relationship="Self.FK_TBLSALES_TBLPRODUCT" FromRole="TBLSALES" ToRole="TBLPRODUCT" />
+  </EntityType>
+  <Association Name="FK_TBLPRODUCT_TBLCATEGORY">
+    <End Role="TBLCATEGORY" Type="Self.TBLCATEGORY" Multiplicity="0..1" />
+    <End Role="TBLPRODUCT" Type="Self.TBLPRODUCT" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="TBLCATEGORY">
+        <PropertyRef Name="ID" />
+      </Principal>
+      <Dependent Role="TBLPRODUCT">
+        <PropertyRef Name="CATEGORY" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_TBLSALES_TBLCUSTOMER">
+    <End Role="TBLCUSTOMER" Type="Self.TBLCUSTOMER" Multiplicity="0..1" />
+    <End Role="TBLSALES" Type="Self.TBLSALES" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="TBLCUSTOMER">
+        <PropertyRef Name="CUSTOMERID" />
+      </Principal>
+      <Dependent Role="TBLSALES">
+        <PropertyRef Name="CUSTOMER" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_TBLSALES_TBLPRODUCT">
+    <End Role="TBLPRODUCT" Type="Self.TBLPRODUCT" Multiplicity="0..1" />
+    <End Role="TBLSALES" Type="Self.TBLSALES" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="TBLPRODUCT">
+        <PropertyRef Name="PRODUCTID" />
+      </Principal>
+      <Dependent Role="TBLSALES">
+        <PropertyRef Name="PRODUCT" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityContainer Name="DbEntityProductEntities" annotation:LazyLoadingEnabled="true">
+    <EntitySet Name="TBLCATEGORY" EntityType="Self.TBLCATEGORY" />
+    <EntitySet Name="TBLCUSTOMER" EntityType="Self.TBLCUSTOMER" />
+    <EntitySet Name="TBLPRODUCT" EntityType="Self.TBLPRODUCT" />
+    <EntitySet Name="TBLSALES" EntityType="Self.TBLSALES" />
+    <AssociationSet Name="FK_TBLPRODUCT_TBLCATEGORY" Association="Self.FK_TBLPRODUCT_TBLCATEGORY">
+      <End Role="TBLCATEGORY" EntitySet="TBLCATEGORY" />
+      <End Role="TBLPRODUCT" EntitySet="TBLPRODUCT" />
+    </AssociationSet>
+    <AssociationSet Name="FK_TBLSALES_TBLCUSTOMER" Association="Self.FK_TBLSALES_TBLCUSTOMER">
+      <End Role="TBLCUSTOMER" EntitySet="TBLCUSTOMER" />
+      <End Role="TBLSALES" EntitySet="TBLSALES" />
+    </AssociationSet>
+    <AssociationSet Name="FK_TBLSALES_TBLPRODUCT" Association="Self.FK_TBLSALES_TBLPRODUCT">
+      <End Role="TBLPRODUCT" EntitySet="TBLPRODUCT" />
+      <End Role="TBLSALES" EntitySet="TBLSALES" />
+    </AssociationSet>
+    <FunctionImport Name="GETBRAND" ReturnType="Collection(String)" />
+    <EntitySet Name="TBLADMIN" EntityType="DbEntityProductModel.TBLADMIN" />
+  </EntityContainer>
+  <EntityType Name="TBLADMIN">
+    <Key>
+      <PropertyRef Name="ID" />
+    </Key>
+    <Property Name="ID" Type="Byte" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="USERNAME" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+    <Property Name="PASSWORD" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+  </EntityType>
+</Schema>
